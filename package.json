@@ -1,0 +1,45 @@
+{
+  "name": "ContactManagerBackend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon",
+    "build": "tsc",
+    "lint:fix": "tslint --fix -c tslint.json 'src/**/*.{ts,js}' 'test/**/*.{ts,js}'",
+    "prettify": "prettier --single-quote --print-width 120 --write {src,test}/**/*.ts",
+    "format:code": "run-s lint:fix prettify",
+    "migrate:make": "knex --migrations-directory src/db/migrations migrate:make",
+    "migrate": "knex migrate:latest --knexfile src/db/knexfile.ts",
+    "rollback": "knex migrate:rollback --knexfile src/db/knexfile.ts"
+  },
+  "keywords": [
+    "typescript",
+    "nodejs"
+  ],
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "http-status-codes": "^2.2.0",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^2.2.0",
+    "pg": "^8.7.3",
+    "winston": "^3.8.1"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/jsonwebtoken": "^8.5.8",
+    "nodemon": "^2.0.19",
+    "prettier": "^2.7.1",
+    "ts-lint": "^4.5.1",
+    "ts-node": "^10.9.1",
+    "tslint": "^6.1.3",
+    "tslint-config-leapfrog": "^1.0.3",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^4.7.4"
+  }
+}
