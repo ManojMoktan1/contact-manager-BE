@@ -1,3 +1,4 @@
 export interface Token{
-    token: string;
+    access_token:string
+    id:number;
 }

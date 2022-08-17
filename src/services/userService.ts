@@ -139,7 +139,7 @@ export const loginUser = async (email: string, password:string): Promise<Success
   if (isCorrect) {
     const token = jwt.sign({id:user.id}, process.env.JWT_SECRET as string);
     return{
-      data: {token},
+      data: {id: user.id, access_token: token},
       message: "Login Successful"    
     }
 
