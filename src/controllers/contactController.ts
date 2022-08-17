@@ -9,8 +9,9 @@ export const getAllContacts = (
   res: Response,
   next: NextFunction
 ) => {
+  const { id } = req.body;
   contactService
-    .getAllContacts()
+    .getAllContacts(+id)
     .then((data) => res.json(data))
     .catch((err) => next(err));
 };
@@ -46,17 +47,24 @@ export const createContact = (
   res: Response,
   next: NextFunction
 ) => {
-  const { file, name, phone, email, address } = req.body;
+  const {
+    photograph,
+    name,
+    phone,
+    email,
+    address,
+    is_favourite_contact,
+    user_id,
+  } = req.body;
   logger.info(process.env.CLOUDINARY_NAME);
   cloudinary.uploader.upload(
-    file,
+    photograph,
     { resource_type: "image" },
     (err, result) => {
       if (err) {
         logger.info(`error is ${err.message}`);
         return next(err);
       }
-      logger.info(";sdjf;kajdskfl;jakl;dfjlsdjf");
       logger.info(JSON.stringify(result));
       contactService
         .createContact({
@@ -64,6 +72,8 @@ export const createContact = (
           phone,
           email,
           address,
+          is_favourite_contact: is_favourite_contact === "true" ? true : false,
+          user_id,
           photograph: result?.url as string,
           cloudinary_id: result?.public_id as string,
         })
@@ -78,36 +88,46 @@ export const updateContact = (
   res: Response,
   next: NextFunction
 ) => {
-  const { id, file, name, phone, email, address, cloudinary_id } = req.body;
-try{
-  cloudinary.uploader.upload(
-    file,
-    { resource_type: "image", public_id: cloudinary_id },
-    (err, result) => {
-      if (err) {
-        logger.info(`error is ${err.message}`);
-        return next(err);
+  const {
+    id,
+    photograph,
+    name,
+    phone,
+    email,
+    address,
+    cloudinary_id,
+    user_id,
+    is_favourite_contact,
+  } = req.body;
+  try {
+    cloudinary.uploader.upload(
+      photograph,
+      { resource_type: "image", public_id: cloudinary_id },
+      (err, result) => {
+        if (err) {
+          logger.info(`error is ${err.message}`);
+          return next(err);
+        }
+        logger.info(JSON.stringify(result));
+        contactService
+          .updateContact({
+            id,
+            name,
+            phone,
+            email,
+            address,
+            user_id,
+            is_favourite_contact,
+            photograph: result?.url as string,
+            cloudinary_id: result?.public_id as string,
+          })
+          .then((data) => res.json(data))
+          .catch((Error) => next(Error));
       }
-      logger.info(JSON.stringify(result));
-      contactService
-        .updateContact({
-          id,
-          name,
-          phone,
-          email,
-          address,
-          photograph: result?.url as string,
-          cloudinary_id: result?.public_id as string,
-        })
-        .then((data) => res.json(data))
-        .catch((Error) => next(Error));
-    }
-  );
-
-}catch(err) {
-  logger.info(`error is ${err}`);
-}
-
+    );
+  } catch (err) {
+    logger.info(`error is ${err}`);
+  }
 };
 
 export const deleteContact = (
@@ -116,8 +136,8 @@ export const deleteContact = (
   next: NextFunction
 ) => {
   const { id } = req.params;
-contactService
-.deleteContact(+id)
-.then((data) => res.json(data))
-.catch((Error) => next(Error));
-}
+  contactService
+    .deleteContact(+id)
+    .then((data) => res.json(data))
+    .catch((Error) => next(Error));
+};

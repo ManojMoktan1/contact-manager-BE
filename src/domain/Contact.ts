@@ -6,6 +6,8 @@ export interface Contact{
     address: string;
     photograph: string;
     cloudinary_id: string;
+    is_favourite_contact: boolean;
+    user_id: number;
 }
 
 export type ContactToInsert = Omit<Contact, "id">;
